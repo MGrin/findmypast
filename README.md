@@ -1,6 +1,6 @@
 # Find My Past coding challenge
 Builded using create-react-app.
-Working on the combination of requirements (so Markup and Javascript)
+Working on the Javascript requirements.
 
 # How to use
 1. Install dependencies: `npm install` or `yarn install`
