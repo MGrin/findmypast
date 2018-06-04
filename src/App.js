@@ -38,17 +38,39 @@ class App extends Component {
     },
   }
 
-  createNote = () => this.setState(({ notes }) => ({
+  componentDidMount() {
+    try {
+      const persistentState = JSON.parse(localStorage.getItem('state'));
+      this.setState({
+        notes: persistentState.notes,
+        note: persistentState.note,
+      });
+    } catch (e) {
+      console.log('No previous state');
+    }
+  }
+
+  setPersistentState = (update) => this
+    .setState(update, () => localStorage.setItem('state', JSON.stringify(this.state)));
+
+  createNote = () => this.setPersistentState(({ notes }) => ({
     notes: [...notes, this.state.note],
     note: { title: '', content: '' },
     showCreator: false,
   }));
-  updateNote = field => ({ target: { value } }) => this.setState(({ note }) => ({ note: { ...note, [field]: value } }));
+  updateNote = field => ({ target: { value } }) => this.setPersistentState(({ note }) => ({ note: { ...note, [field]: value } }));
+  canSaveNote = () => !!this.state.note.title || !!this.state.note.content;
 
   onNoteClick = (_, idx) => this.setState({ selectedNoteIndex: idx });
   toggleModal = () => this.setState(({ showCreator }) => ({ showCreator: !showCreator }));
 
-  renderNoNotes = () => <p style={{ textAlign: 'center', color: '#e0e0e0' }}>No notes found</p>;
+  handleKeyPress = (event) => {
+    if(event.key === 'Enter' && this.canSaveNote()){
+      this.createNote();
+    }
+  }
+
+  renderNoNotes = () => <p style={{ textAlign: 'center' }}>No notes found</p>;
   render() {
     const { notes, showCreator, selectedNoteIndex } = this.state;
     
@@ -59,24 +81,33 @@ class App extends Component {
           onRequestClose={this.toggleModal}
           style={this.modalStyle}
           ariaHideApp={false}>
-          <input placeholder="title" value={this.state.note.title} onChange={this.updateNote('title')} />
-          <textarea placeholder="content" value={this.state.note.content} onChange={this.updateNote('content')} />
-          <button onClick={this.createNote}>Save</button>
-          <button>Cancel</button>
+          <input
+            placeholder="title"
+            value={this.state.note.title}
+            onChange={this.updateNote('title')}
+            onKeyPress={this.handleKeyPress} />
+          <textarea
+            placeholder="content"
+            value={this.state.note.content}
+            onChange={this.updateNote('content')}
+            onKeyPress={this.handleKeyPress} />
+          <div className="buttons" style={{ float: 'right' }}>
+            <button disabled={!this.canSaveNote()} onClick={this.createNote}>Save</button>
+            <button onClick={this.toggleModal}>Cancel</button>
+          </div>
         </Modal>
         <List
           items={notes}
           renderNoItemsFallback={this.renderNoNotes}
           renderItem={note => <NoteLine note={note} />}
           onItemClick={this.onNoteClick} />
-        <button onClick={this.toggleModal}>New note</button>
+        <button style={{ width: '100%' }} onClick={this.toggleModal}>Create note</button>
         <Modal
           isOpen={selectedNoteIndex !== null}
           onRequestClose={() => this.setState({ selectedNoteIndex : null })}
           style={this.modalStyle}
           ariaHideApp={false}>
-          {notes[selectedNoteIndex] && <h1>{notes[selectedNoteIndex].title}</h1>}
-          {notes[selectedNoteIndex] && <p>{notes[selectedNoteIndex].content}</p>}
+          {notes[selectedNoteIndex] && <NoteLine note={notes[selectedNoteIndex]} />}
         </Modal>
       </div>
     );

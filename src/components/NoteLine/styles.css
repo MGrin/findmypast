@@ -1,0 +1,17 @@
+.note__wrapper {
+  padding: 12px;
+  min-width: 320px;
+  max-width: 640px;
+}
+
+.note__title {
+  font-size: 24px;
+}
+
+.note__content {
+  color: grey;
+  /* white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; */
+  display: block;
+}

@@ -19,3 +19,41 @@ html, body, #root {
   display: 'flex';
   flex-direction: 'row';
 }
+
+button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #CCCCCC;
+  color: black;
+  cursor: inherit;
+}
+
+.buttons {
+  padding-top: 12px;
+}
+
+input {
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid grey;
+  padding: 6px;
+}
+
+textarea {
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid grey;
+  padding: 6px;
+}
